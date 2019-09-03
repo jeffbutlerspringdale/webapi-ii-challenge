@@ -77,7 +77,7 @@ router.get('/:id', (req, res) => {
 
 router.get('/:id/comments', (req, res) => {
     const { id } = req.params;
-    db.findCommentById(id)
+    db.findPostComments(id)
     .then(commentByID => {
         if (commentByID) {
             res.json(commentByID)
@@ -95,7 +95,7 @@ router.get('/:id/comments', (req, res) => {
     })
 })
 
-//DELETES's`
+//DELETES's
 router.delete('/:id', (req, res) => {
     const { id } = req.params;
     db.remove(id)
