@@ -7,17 +7,20 @@ const server = express();
 //middleware
 server.use(express.json());
 
+//req is request, res is response
+//req is dealing with incoming, res is to deal with outgoing
+
 //home
+
 server.get('/', (req, res) => {
-    //req is request, res is response
-    //req is dealing with incoming, res is to deal with outgoing
     res.send('Home');
 })
 
 //POSTS's
 server.post('/api/posts', (req, res) => {
     const newPost = req.body;
-    db.insert(newPost)
+    if (newPost.name && newPost.bio) {
+        db.insert(newPost)
         .then(post => {
             res.status(201).json(post)
         })
@@ -27,13 +30,16 @@ server.post('/api/posts', (req, res) => {
                 message: 'failed to create new post'
             })
         })
+    } else {
+        res.status(400).json("Please provide title and contents for the post.")
+    }
 })
 
 server.post('/api/posts/:id/comments', (req, res) => {
     const { id } = req.params;
     const newComment = req.body;
-
-    db.insert(id, newComment)
+    if (newComment.text) {
+        db.insert(id, newComment)
         .then(newComment => {
             res.status(201).json(newComment)
         })
@@ -43,6 +49,9 @@ server.post('/api/posts/:id/comments', (req, res) => {
                 message: 'failed to create new comment'
             })
         })
+    } else {
+        res.status(400).json("Please provide text for the comment.")
+    }
 })
 
 //GETS's
@@ -54,7 +63,7 @@ server.get('/api/posts', (req, res) => {
     .catch(err => {
         res.status(500).json({
             err: err,
-            message: 'failed to get posts'
+            message: 'The posts information could not be retrieved.'
         })
     })
 })
@@ -67,14 +76,14 @@ server.get('/api/posts/:id', (req, res) => {
             res.json(postByID)
         } else {
             res.status(404).json({
-                message: 'invalid post ID'
+                message: 'The post with the specified ID does not exist.'
             })
         }
     })
     .catch(err => {
         res.status(500).json({
             err: err,
-            message: 'failed to get post by ID'
+            message: 'The post information could not be retrieved.'
         })
     })
 })
@@ -87,19 +96,19 @@ server.get('/api/posts/:id/comments', (req, res) => {
             res.json(commentByID)
         } else {
             res.status(404).json({
-                message: 'invalid comment ID'
+                message: 'The post with the specified ID does not exist.'
             })
         }
     })
     .catch(err => {
         res.status(500).json({
             err: err,
-            message: 'failed to get comment by ID'
+            message: 'The comments information could not be retrieved.'
         })
     })
 })
 
-//DELETES's
+//DELETES's`
 server.delete('/api/posts/:id', (req, res) => {
     const { id } = req.params;
     db.remove(id)
@@ -108,14 +117,14 @@ server.delete('/api/posts/:id', (req, res) => {
             res.json(deletedPost);
         } else {
             res.status(404).json({
-                message: 'invalid post ID'
+                message: 'The post with the specified ID does not exist.'
             })
         }
     })
     .catch(err => {
         res.status(500).json({
             err: err,
-            message: 'failed to remove post'
+            message: 'The post with the specified ID does not exist.'
         })
     })
 })
@@ -131,14 +140,14 @@ server.put('/api/posts/:id', (req, res) => {
             res.json(updated);
         } else {
             res.status(404).json({
-                message: 'invalid post ID'
+                message: 'The post with the specified ID does not exist.'
             })
         }
     })
     .catch(err => {
         res.status(500).json({
             err: err,
-            message: 'failed to update post'
+            message: 'The post information could not be modified.'
         })
     })
 })
