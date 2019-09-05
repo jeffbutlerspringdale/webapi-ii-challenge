@@ -1,9 +1,11 @@
 //libraries
+require('dotenv').config();
 const express = require('express');
 //other files
 const PostRouter = require('./router.js')
 //global objects
 const server = express();
+const port = process.env.PORT || 4000;
 //middleware
 server.use(express.json());
 server.use('/api/posts', PostRouter)
@@ -18,6 +20,6 @@ server.get('/', (req, res) => {
 })
 
 //server.listen always last
-server.listen(4000, () => {
-    console.log('server is running on port 4000...'); 
-});
+server.listen(port, () => {
+    console.log(`\n*** Server Running on port ${port} ***\n`);
+  });
